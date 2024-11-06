@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from '@env';
 
 export interface Product {
     id: number;
@@ -12,7 +13,7 @@ export interface Product {
 
 export const getAllProducts = async () => {
     try{
-        const products = await axios.get('http://10.0.2.2:3000/product/all');
+        const products = await axios.get(`${BASE_URL}/product/all`);
         return products.data
 
     }catch(err){
@@ -22,7 +23,7 @@ export const getAllProducts = async () => {
 
 export const getProductDetail = async (id: number) => {
     try{
-        const productDetail = await axios.get('http://10.0.2.2:3000/product/' + id);
+        const productDetail = await axios.get<Product>(`${BASE_URL}/product/${id}`);
         return productDetail.data
 
     }catch(err){

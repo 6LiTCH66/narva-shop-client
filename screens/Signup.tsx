@@ -1,57 +1,92 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-// import { registerWithEmail, db } from '../components/Firebase/firebase';
+import {Text, View, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
+import {AuthError, NewUser, signup} from "../http/userAPI";
 
 const Signup: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [name, setName] = useState<string>('');
-    const [secondname, setSecondname] = useState<string>('');
+    const [newUser, setNewUser] = useState<NewUser>({firstName: "", lastName: "", email: "", password: ""});
+
+    const [errors, setErrors] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+    });
 
     const handleSignup = () => {
-        // registerWithEmail(email, password)
-        //     .then(data => {
-        //         db.collection("users").doc(data.user.uid).set({
-        //             name: name,
-        //             secondname: secondname,
-        //             email: email,
-        //             userPhoto: ''
-        //         });
-        //     })
-        //     .catch(error => {
-        //         alert(error.message);
-        //     });
+        console.log(newUser)
+    };
+
+    const handleInputChange = (field: keyof NewUser, value: string) => {
+        setNewUser(prevState => ({
+            ...prevState,
+            [field]: value,
+        }));
+    };
+
+    const validateFields = () => {
+        let isValid = true;
+        let newErrors = { ...errors };
+
+        Object.keys(newUser).forEach(key => {
+            const value = newUser[key as keyof NewUser];
+            if (!value.trim()) {
+                newErrors[key as keyof NewUser] = "This field cannot be empty";
+                isValid = false;
+            }
+        });
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
+    const handleSubmit = () => {
+        if (validateFields()) {
+            signup(newUser).then((_) => {
+                navigation.navigate("Login")
+            }).catch((err: AuthError) => {
+                Alert.alert("Error while singing up!", err.message);
+            })
+
+        } else {
+            Alert.alert("Validation Error", "Please fill in all fields");
+        }
     };
 
     return (
         <View style={styles.container}>
             <TextInput
                 style={styles.inputBox}
-                value={name}
-                onChangeText={setName}
-                placeholder='Name'
+                value={newUser.firstName}
+                onChangeText={(text) => handleInputChange('firstName', text)}
+                placeholder='First name'
+                onBlur={() => validateFields()}
             />
             <TextInput
                 style={styles.inputBox}
-                value={secondname}
-                onChangeText={setSecondname}
+                value={newUser.lastName}
+                onChangeText={(text) => handleInputChange('lastName', text)}
                 placeholder='Second name'
+                onBlur={() => validateFields()}
             />
             <TextInput
                 style={styles.inputBox}
-                value={email}
-                onChangeText={setEmail}
+                value={newUser.email}
+                onChangeText={(text) => handleInputChange('email', text)}
                 placeholder='Email'
                 autoCapitalize='none'
+                onBlur={() => validateFields()}
+                keyboardType='email-address'
             />
             <TextInput
                 style={styles.inputBox}
-                value={password}
-                onChangeText={setPassword}
+                value={newUser.password}
+                onChangeText={(text) => handleInputChange('password', text)}
                 placeholder='Password'
                 secureTextEntry={true}
+                onBlur={() => validateFields()}
+
             />
-            <TouchableOpacity style={styles.button} onPress={handleSignup}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
         </View>

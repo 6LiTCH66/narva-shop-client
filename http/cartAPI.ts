@@ -1,6 +1,7 @@
 import axios from "axios";
 import {Product} from "./productAPI";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { BASE_URL } from '@env';
 
 export interface CartItem {
     id: number;
@@ -15,7 +16,7 @@ export interface ICart {
 
 export const getUserCart = async () => {
     try {
-        const cart = await axios.get<ICart>('http://10.0.2.2:3000/cart/me');
+        const cart = await axios.get<ICart>(`${BASE_URL}/cart/me`);
         return cart.data;
     }catch (err){
         throw err;
@@ -24,7 +25,7 @@ export const getUserCart = async () => {
 
 export const deleteProductFromCart = async (id: number) => {
     try{
-        const item = await axios.delete(`http://10.0.2.2:3000/cart/remove/${id}`);
+        const item = await axios.delete(`${BASE_URL}/cart/remove/${id}`);
         return item.data
 
     }catch(err){
@@ -40,7 +41,7 @@ export interface NewCartItem {
 
 export const addProductToCart = async (newCartItem: NewCartItem) => {
     try {
-        const newProduct = await axios.post(`http://10.0.2.2:3000/cart/add`, newCartItem, {withCredentials: true});
+        const newProduct = await axios.post(`${BASE_URL}/cart/add`, newCartItem, {withCredentials: true});
         return newProduct.data
 
     }catch (err){
@@ -57,7 +58,7 @@ export interface EditProduct{
 
 export const editProductInCart = async (editProduct: EditProduct) => {
     try{
-        const editedItem = await axios.patch(`http://10.0.2.2:3000/cart/edit/${editProduct.id}`, {quantity: editProduct.quantity, operation: editProduct.operation}, {withCredentials: true})
+        const editedItem = await axios.patch(`${BASE_URL}/cart/edit/${editProduct.id}`, {quantity: editProduct.quantity, operation: editProduct.operation}, {withCredentials: true})
         return editedItem.data
 
     }catch (err){
@@ -70,12 +71,9 @@ export const useEditProductInCart = () => {
 
     return useMutation({
         mutationFn: editProductInCart,
-        onError: (error) => {
-            console.log(error.message)
-        },
+
         onSuccess: (data) => {
-            console.log(data)
-            // Invalidate the userCart query to refetch cart data after deletion
+
             queryClient.invalidateQueries({queryKey: ['userCart']});
         },
     });
@@ -92,7 +90,7 @@ export const useAddToCart = () => {
     return useMutation({
         mutationFn: addProductToCart,
         onSuccess: () => {
-            // Invalidate the userCart query to refetch cart data after deletion
+
             queryClient.invalidateQueries({queryKey: ['userCart']});
         },
     });
@@ -105,7 +103,8 @@ export const useDeleteFromCart = () => {
     return useMutation({
         mutationFn: deleteProductFromCart,
         onSuccess: () => {
-            // Invalidate the userCart query to refetch cart data after deletion
+
+
             queryClient.invalidateQueries({queryKey: ['userCart']});
         },
     });

@@ -100,36 +100,7 @@ const Cart: React.FC = () => {
                                 {renderRightSide(item)}
                                 <CounterIcon item={item} key={index}/>
 
-                                {/*transparent*/}
 
-
-                                {/*<CounterInput*/}
-                                {/*    style={{padding: 0, shadowRadius: 0, shadowColor: 'transparent', flex: 1}}*/}
-                                {/*    initial={item.quantity}*/}
-                                {/*    decreaseButtonBackgroundColor={"#832438"}*/}
-                                {/*    increaseButtonBackgroundColor={"#832438"}*/}
-                                {/*    reverseCounterButtons={true}*/}
-                                {/*    borderRadius={10}*/}
-                                {/*    horizontal={false}*/}
-                                {/*    min={1}*/}
-                                {/*    max={item.product.quantity}*/}
-
-                                {/*    onDecreasePress={(_) => {*/}
-                                {/*        setOperation("decrease")*/}
-                                {/*    }}*/}
-
-                                {/*    onIncreasePress={(_) => {*/}
-                                {/*        setOperation("increase")*/}
-                                {/*    }}*/}
-
-
-                                {/*    onChange={(counter) => {*/}
-                                {/*        // console.log(operation)*/}
-                                {/*        editItem(operation)*/}
-                                {/*        // console.log(item.id)*/}
-                                {/*        // console.log("onChange Counter:", counter);*/}
-                                {/*    }}*/}
-                                {/*/>*/}
 
                                 <View style={styles.renderLeft}>
 

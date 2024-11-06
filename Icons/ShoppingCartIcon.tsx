@@ -11,7 +11,7 @@ const ShoppingCartIcon: React.FC = () => {
     return (
         <View style={{ padding: 5 }}>
             <View style={styles.iconStyle}>
-                <Text style={{ color: 'white', fontWeight: 'bold' }}>{cart?.cartItems?.length}</Text>
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>{cart?.cartItems?.length ?? 0}</Text>
             </View>
             <Icon name="cart" size={30} />
         </View>

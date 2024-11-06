@@ -9,7 +9,7 @@ interface CounterIconProps{
 
 const CounterIcon = (counterIconProps: CounterIconProps) => {
     const [operation, setOperation] = useState<Operation>("increase")
-    const [counter, setCounter] = useState<number>(counterIconProps.item.quantity)
+    const [counter, setCounter] = useState<number>(1)
 
     const editProductInCart = useEditProductInCart()
 
@@ -22,8 +22,8 @@ const CounterIcon = (counterIconProps: CounterIconProps) => {
 
         setOperation("increase")
 
-        if (counterIconProps.item.product.quantity > counter){
-            setCounter((prevCounter) => prevCounter + 1)
+        if (counterIconProps.item.product.quantity >= 1){
+            // setCounter((prevCounter) => prevCounter + 1)
 
             const editedProduct: EditProduct = {
                 id: counterIconProps.item.id,

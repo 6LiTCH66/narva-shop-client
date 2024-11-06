@@ -13,34 +13,42 @@ import {
 import CounterInput from "react-native-counter-input";
 import ScrollView = Animated.ScrollView;
 import {NewCartItem, useAddToCart} from "../http/cartAPI";
+import {getProductDetail} from "../http/productAPI";
 
 interface ProductDetailProps {
     route: {
         params: {
-            data: {
-                id: number;
-                name: string;
-                price: number;
-                description: string;
-                image: string;
-                quantity: number;
-                size: string[]
-            };
+            data: ProductDetail
         };
     };
 }
 
+interface ProductDetail {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    image: string;
+    quantity: number;
+    size: string[]
+}
+
 const ProductDetail: React.FC<ProductDetailProps> = ({ route }) => {
+    const { data } = route.params;
 
     const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
     const [selectedSize, setSelectedSize] = useState<string>("");
     const [productQuantity, setProductQuantity] = useState<number>(1);
 
+    const [productDetail, setProductDetail] = useState<ProductDetail>(data)
+
     const addProductToCart = useAddToCart()
 
-    const { data } = route.params;
+
 
     useEffect(() => {
+        // console.log(data)
+
         data.size.sort((a, b) => sizeOrder.indexOf(a) - sizeOrder.indexOf(b));
         setSelectedSize(data.size[0])
 
@@ -48,11 +56,20 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ route }) => {
 
 
     const addToCart = (newCartItem: NewCartItem) => {
-        addProductToCart.mutate(newCartItem)
+
+        addProductToCart.mutate(newCartItem, {
+            onSuccess: () => {
+                getProductDetail(data.id).then((product) => {
+                    product.size.sort((a, b) => sizeOrder.indexOf(a) - sizeOrder.indexOf(b));
+                    setProductDetail(product)
+
+                }).catch((_) => {})
+            }
+        })
+
     }
 
-
-    const renderHeader = (info: typeof data) => (
+    const renderHeader = (info: typeof productDetail) => (
         <ScrollView style={styles.header}>
             <ImageBackground style={styles.image} source={{ uri: info.image }} />
             <View style={styles.detailsContainer}>
@@ -64,7 +81,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ route }) => {
                     </Text>
                     <ScrollView contentContainerStyle={styles.scrollView}>
                         <View style={styles.flatListContainer}>
-                            {data.size.map((item, index) => (
+                            {productDetail.size.map((item, index) => (
                                 <TouchableOpacity key={index} onPress={() => setSelectedSize(item)}>
                                     <View style={[
                                         styles.innerItem,
@@ -90,19 +107,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ route }) => {
                         borderRadius={10}
                         horizontal={true}
                         min={1}
-                        max={data.quantity}
+                        max={productDetail.quantity}
                         onChange={(counter) => {
                             setProductQuantity(counter)
                         }}
                     />
-                    <TouchableOpacity onPress={() => addToCart({productId: data.id, quantity: productQuantity, size: selectedSize})} style={styles.buttonStyle}>
-                        <Text style={styles.textStyle}>IN STOCK - ADD TO CART</Text>
+                    <TouchableOpacity disabled={productDetail.quantity <= 0} onPress={() => addToCart({productId: productDetail.id, quantity: productQuantity, size: selectedSize})} style={styles.buttonStyle}>
+                        <Text style={styles.textStyle}>{productDetail.quantity > 0 ? 'IN STOCK - ADD TO CART' : 'OUT OF STOCK'}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{marginTop: 20}}>
 
                     <Text style={{fontWeight: "bold", fontSize: 20 }}>
-                        Description
+                        Description:
                     </Text>
                     <Text style={styles.description}>{info.description}</Text>
 
@@ -113,7 +130,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ route }) => {
 
     return (
         <SafeAreaView>
-            {renderHeader(data)}
+            {renderHeader(productDetail)}
         </SafeAreaView>
     );
 };

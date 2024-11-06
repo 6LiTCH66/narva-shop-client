@@ -4,15 +4,9 @@ import { Avatar, Title, Drawer, Caption,} from 'react-native-paper';
 
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 
-// import { logout } from '../components/Firebase/firebase'
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getMe, logout} from "../http/userAPI";
 
-// import { auth, db, fireStorage } from '../components/Firebase/firebase';
-
-// import GetUser from '../functions/GetUser';
-// import GetUserPhoto from '../functions/GetUserPhoto';
 
 interface User {
     id: number;
@@ -26,28 +20,19 @@ export default function DrawerContent(props: any) {
     const [currentUser, setCurrentUser] = useState<User>();
 
     useEffect(() => {
+
         getMe().then((user) => {
+
             setCurrentUser(user);
-        })
+
+        }).catch(_err => {})
+
     }, [props]);
 
 
-    // const auth = {
-    //     currentUser: {
-    //         uid: 'exampleUID123',
-    //         email: 'user@example.com',
-    //         displayName: 'John Doe',
-    //         photoURL: 'https://example.com/photo.jpg',
-    //         emailVerified: true,
-    //         phoneNumber: '+1234567890',
-    //
-    //
-    //     }
-    // };
-
     const singout = () => {
         logout().then(() => {
-            props.navigation.navigate("Auth")
+            props.navigation.navigate("Login")
         })
     }
 

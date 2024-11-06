@@ -1,47 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Button } from 'react-native';
 import {getMe, logout, signin} from "../http/userAPI";
-import axios from "axios";
-import {getAllProducts} from "../http/productAPI";
 import products from "./Products";
 import Signup from "./Signup";
-// import { loginWithEmail } from '../components/Firebase/firebase';
 
 const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    useEffect(() => {
-        getMe().then((user) => {
-            console.log(user)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, []);
 
     const handleLogin = () => {
 
-        // logout().then((data) => {
-        //     console.log(data)
-        // })
-
         signin(email, password).then((user) => {
-            console.log(user)
+            setEmail("")
+            setPassword("")
             navigation.navigate("Home")
 
         }).catch(err => {
-            console.log(err.message)
+            console.log(err)
         })
 
-        // getAllProducts().then((products) => {
-        //     console.log(products)
-        // }).catch(err => {
-        //     console.log(err)
-        // })
 
-        // loginWithEmail(email, password);
-        // console.log(email)
-        // console.log(password)
     };
 
     return (

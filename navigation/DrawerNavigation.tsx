@@ -18,22 +18,15 @@ const DrawerNavigation = ( props: any, navigation: any ) =>{
     const [initializing, setInitializing] = useState(true);
     const [user, setUser] = useState();
 
-    // function onAuthStateChanged(user) {
-    //     setUser(user);
-    //     if (initializing) setInitializing(false);
-    // }
 
-    // useEffect(() => {
-    //     const subscriber = authStateChange(onAuthStateChanged);
-    //     return subscriber;
-    // }, []);
-
-    // if (initializing) return null;
     useEffect(() => {
+
         getMe().then((user) => {
-            console.log(user)
+
             setUser(user);
-        })
+
+        }).catch(_err => {})
+
     }, []);
 
 
